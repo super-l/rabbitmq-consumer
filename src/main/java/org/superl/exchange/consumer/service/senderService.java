@@ -42,41 +42,38 @@ public class senderService extends Thread{
     private Channel channel;
 
     public senderService(String name) {
-
-            this.queueName = name;
-
+        this.queueName = name;
     }
 
     public void run(){
 
-            ConnectionFactory factory = new ConnectionFactory();
+        ConnectionFactory factory = new ConnectionFactory();
 
-            //设置RabbitMQ相关信息
-            factory.setHost("127.0.0.0");
-            factory.setUsername("superl");
-            factory.setPassword("superl#a");
-            factory.setPort(5672);
-            factory.setVirtualHost("myspider");
+        //设置RabbitMQ相关信息
+        factory.setHost("127.0.0.0");
+        factory.setUsername("superl");
+        factory.setPassword("superl#a");
+        factory.setPort(5672);
+        factory.setVirtualHost("myspider");
 
-            try{
-                connection = factory.newConnection();
-                channel = connection.createChannel();
+        try{
+            connection = factory.newConnection();
+            channel = connection.createChannel();
 
-                channel.queueDeclare(queueName, true, false, false, null);
+            channel.queueDeclare(queueName, true, false, false, null);
 
-                for (int i = 0; i < 3000;) {
-                    String message = "NO. " + ++i;
-                    TimeUnit.MILLISECONDS.sleep(100);
-                    channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes("UTF-8"));
-                    log.info(this.queueName+" "+message);
-                    //System.out.printf("(%1$s) %3$s\n", queueNAME, message);
-                }
-                channel.close();
-                connection.close();
-            }catch (Exception e){
-                log.error(e.getMessage());
+            for (int i = 0; i < 3000;) {
+                String message = "NO. " + ++i;
+                TimeUnit.MILLISECONDS.sleep(100);
+                channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes("UTF-8"));
+                log.info(message);
+                //System.out.printf("(%1$s) %3$s\n", queueNAME, message);
             }
-
+            channel.close();
+            connection.close();
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
 
     }
 
